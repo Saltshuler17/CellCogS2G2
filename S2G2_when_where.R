@@ -98,9 +98,9 @@ for (n in 1:length(files)){
   tot_s2g2 <- rbind(tot_s2g2, tot)
   # quick test so I can visually see the loop is working and where it might stop working
   # TAKE OUT BEFORE USING FOR REAL, PRINTING SLOWS EVERYTHING DOWN
-  if (n%%5 ==0){
-    print(n)
-  }
+  # if (n%%5 ==0){
+  #   print(n)
+  # }
 }
 tot_s2g2_unique <- unique(tot_s2g2)
 total_S2G2 <- tot_s2g2_unique[order(tot_s2g2_unique$Time),]
