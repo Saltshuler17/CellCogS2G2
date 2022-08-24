@@ -68,6 +68,40 @@ when_where <- function(df_in) {
   return(df_out)
 }
 
+time_saver <- function(fipath){
+  
+  files <- list.files(fipath)
+  
+  xx <- vector(length = 0)
+  yy <- vector(length = 0)
+  fr <- vector(length = 0)
+  # Initialize an empty data frame
+  tot_s2g2 <- data.frame("X" = xx, "Y" = yy, "Time" = fr)
+  
+  for (n in 1:length(files)){
+    # Read in the .txt file using the file path since the file is not currently in your working directory.
+    # You want to skip the first two rows as they are describing if it is primary or secondary channel. 
+    # You want to make sure that it knows that the third row is the column headers. The .txt file is 
+    # really a tab separate values (tsv) file, so specify the values are separated by a tab when being read in.
+    
+    cell1 <- read.table(paste0(fpath, "/", files[n]),  sep = "\t", skip = 2, header = TRUE)
+    # call the function that looks through to file to find the instance of S -> G2 transition
+    tot <- when_where(cell1)
+    # add those values to the existing data frame
+    tot_s2g2 <- rbind(tot_s2g2, tot)
+    # quick test so I can visually see the loop is working and where it might stop working
+    # TAKE OUT BEFORE USING FOR REAL, PRINTING SLOWS EVERYTHING DOWN
+    # if (n%%5 ==0){
+    #   print(n)
+    # }
+  }
+  tot_s2g2_unique <- unique(tot_s2g2)
+  total_S2G2 <- tot_s2g2_unique[order(tot_s2g2_unique$Time),]
+  
+  return(total_S2G2)
+  
+
+}
 ## Import the Data ----
 # fpath <- "Y:/bromodomain/Sam (server)/CellCognition/220525/Analysis_4_RKO_full analysis_W50-W52/analyzed/00050_01/statistics/full/"
 fpath <- choose.dir()
@@ -77,7 +111,7 @@ files <- list.files(fpath)
 # primary or secondary channel. You want to make sure that it knows that the third row is the 
 # column headers. The .txt file is really a tab separate values (tsv) file, so specify the 
 # values are separated by a tab when being read in.
-cell1 <- read.table("TEST_P00050_01__T00001__O0212__B01.txt",  sep = "\t", skip = 2, header = TRUE)
+# cell1 <- read.table("TEST_P00050_01__T00001__O0212__B01.txt",  sep = "\t", skip = 2, header = TRUE)
 
 xx <- vector(length = 0)
 yy <- vector(length = 0)
@@ -91,7 +125,7 @@ for (n in 1:length(files)){
   # You want to make sure that it knows that the third row is the column headers. The .txt file is 
   # really a tab separate values (tsv) file, so specify the values are separated by a tab when being read in.
   
-  cell1 <- read.table(paste0(fpath, files[n]),  sep = "\t", skip = 2, header = TRUE)
+  cell1 <- read.table(paste0(fpath, "/", files[n]),  sep = "\t", skip = 2, header = TRUE)
   # call the function that looks through to file to find the instance of S -> G2 transition
   tot <- when_where(cell1)
   # add those values to the existing data frame
@@ -107,5 +141,5 @@ total_S2G2 <- tot_s2g2_unique[order(tot_s2g2_unique$Time),]
 
 # will need to change the file name each time since it's a different well/position
 write.csv(total_S2G2,
-          file = "Y:/bromodomain/Sam (server)/CellCognition/220525/Analysis_4_RKO_full analysis_W50-W52/W00050_01_s2g2_2.csv",
+          file = "Y:/bromodomain/Sam (server)/CellCognition/220525/Analysis_5_RKO_full analysis_W50-W52_optimized tracking/W00050_03_s2g2.csv",
           row.names = FALSE)
